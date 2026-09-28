@@ -34,6 +34,8 @@ cargo build --release
 
 ## Installation
 
+<a href="https://crates.io/crates/localgroups-rs"><img alt="Crates.io Version" src="https://img.shields.io/crates/v/localgroups-rs"> <img alt="Crates.io Total Downloads" src="https://img.shields.io/crates/d/localgroups-rs?color=f74c00"></a>
+
 ```bash
 # Install and/or update localgroups-rs from cargo command
 cargo install localgroups-rs
