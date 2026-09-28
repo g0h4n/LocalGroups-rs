@@ -12,6 +12,7 @@ What LocalGroups-rs does today, and what is left. The target is parity with Shar
 - [x] Three auth paths: password, pass-the-hash, Kerberos ccache :white_check_mark:
 - [x] BloodHound `LocalGroup` output shape, `Collected` / `FailureReason` per host and per alias :white_check_mark:
 - [x] Validated against a live domain controller :white_check_mark:
+- [x] `dcerpc`: add LSAT `LsarLookupSids`, resolution for member SIDs to SamAccountName over LSAT :white_check_mark:
 
 ## Next
 
@@ -21,4 +22,3 @@ What LocalGroups-rs does today, and what is left. The target is parity with Shar
 ## Upstream
 
 - [ ] `dcerpc`: make `samr::{encode_sid, decode_sid}` public, deleting the copy in `samr_alias.rs` :red_circle:
-- [ ] `dcerpc`: add LSAT `LsarLookupSids` :red_circle:
