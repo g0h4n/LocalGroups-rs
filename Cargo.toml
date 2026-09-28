@@ -9,7 +9,7 @@ repository = "https://github.com/g0h4n/LocalGroups-rs"
 homepage = "https://github.com/g0h4n/LocalGroups-rs"
 documentation = "https://docs.rs/localgroups-rs/"
 readme = "README.md"
-license-file = "LICENCE.md"
+license-file = "LICENSE"
 rust-version = "1.85"
 
 [dependencies]
