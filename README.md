@@ -19,7 +19,6 @@ It was built to prototype the `Computer`:`LocalGroups` line of the [RustHound-CE
 - [HELP.md](HELP.md) - How to compile it? How to use it? All options with examples.
 - [CHANGELOG.md](CHANGELOG.md) - A record of all significant version changes
 - [ROADMAP.md](ROADMAP.md) - Implemented collection and planned evolutions.
-- [CONTRIBUTING.md](CONTRIBUTING.md) - How to contribute to the project.
 
 Upstream tracking issue: [RustHound-CE#69 \[Feature Request\] LocalGroups](https://github.com/g0h4n/RustHound-CE/issues/69)
 
@@ -56,7 +55,7 @@ export KRB5CCNAME=/tmp/daenerys.targaryen.ccache
 ./localgroups-rs -d ESSOS -u daenerys.targaryen -k -t MEEREEN.ESSOS.LOCAL
 
 # Who is admin where?
-./localgroups-rs -d ESSOS -u daenerys.targaryen -p 'BurnThemAll!' -T hosts.txt -q | jq '.by_principal'
+./localgroups-rs -d ESSOS -u daenerys.targaryen -p 'BurnThemAll!' -T hosts.txt -q --json | jq '.by_principal'
 ```
 
 Three authentication paths are supported, exactly as in RustHound-CE: **NTLMv2 bind** (`-p`), **pass-the-hash** (`-H`), and **Kerberos pass-the-ticket** (`-k`, TGT read from `KRB5CCNAME`). More examples and the full option list are on the [help page](HELP.md).
