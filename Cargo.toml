@@ -1,0 +1,84 @@
+[package]
+authors = ["g0h4n <g0h4n_0@protonmail.com>"]
+name        = "localgroups-rs"
+version     = "1.0.0"
+edition     = "2021"
+description = "Enumerate Windows local group membership over SAMR (BUILTIN aliases) and correlate into BloodHound LocalGroups / AdminTo-CanRDP-ExecuteDCOM-CanPSRemote edges"
+keywords = ["enum", "pentest", "rpc", "samr", "bloodhound"]
+repository = "https://github.com/g0h4n/LocalGroups-rs"
+homepage = "https://github.com/g0h4n/LocalGroups-rs"
+documentation = "https://docs.rs/localgroups-rs/"
+readme = "README.md"
+license-file = "LICENCE.md"
+rust-version = "1.85"
+
+[dependencies]
+# SAMR client + the raw SmbPipe/NDR transport reused in src/samr_alias.rs.
+# 0.2.11+ is required: SmbPipe::{new,bind,call} and samr::{samr_syntax,
+# encode_connect2, encode_open_domain, encode_enum_domains, encode_lookup_domain,
+# SamrHandle} must all be public for the alias path to live outside the crate.
+dcerpc      = "0.2.11"
+smb2-client = "0.2"     # SMB2 transport (NTLMv2 auth) under the \samr pipe
+
+# SID type, shared with dcerpc's decode_lookup_domain output.
+# dcerpc 0.2.11 requires ^0.1, so this must stay on 0.1.x or the two crates
+# would see different Sid types.
+windows-sddl = "0.1"
+
+# NDR marshaling is NOT declared here on purpose. dcerpc pins `ms-ndr =0.1.2`
+# and re-exports it as `dcerpc::ndr`, which is what src/samr_alias.rs imports.
+# Declaring ms-ndr directly would let cargo resolve a different patch release,
+# giving two incompatible NdrEncoder types.
+
+# Kerberos pass-the-ticket (src/transport/kerberos.rs + gss.rs).
+# Versions pinned exactly as RustHound-CE pins them, so the transport/ files
+# stay byte-identical between the two trees.
+# ref: https://github.com/g0h4n/RustHound-CE/blob/main/Cargo.toml
+# `rand` must stay on 0.8: transport/kerberos.rs calls rand::thread_rng(),
+# removed in 0.9, and picky-krb 0.11.1 itself requires ^0.8.
+# ms-pac-forge supplies the RC4 checksum/crypt primitives transport/kerberos.rs
+# calls in fully qualified form (ms_pac_forge::checksum::rc4_*), for the
+# etype 23 path. Same version RustHound-CE pins.
+ms-pac-forge   = "0.1.3"
+picky-krb      = "=0.11.1"
+picky-asn1     = "0.10"
+picky-asn1-der = "0.5"
+rand           = "0.8"
+
+# serialization
+serde      = { version = "1", features = ["derive"] }   # #[derive(Serialize)]
+serde_json = "1"                                         # pretty JSON output
+
+# async runtime
+# "full" enables: rt-multi-thread, io, net, time, fs, macros (#[tokio::main]).
+tokio = { version = "1", features = ["full"] }
+
+# Time
+chrono = "0.4"
+
+# error handling
+anyhow = "1"    # context(), ? propagation, best-effort error capture per host
+
+# CLI argument parsing (modeled on RustHound-CE's args.rs style)
+# https://github.com/g0h4n/RustHound-CE/blob/main/src/args.rs
+clap = { version = "4.6", features = ["derive"] }
+
+# Logging (LevelFilter used in Options.verbose)
+log = "0.4"
+
+# Logging backend (mirrors RustHound-CE's exact setup)
+# ref: https://github.com/g0h4n/RustHound-CE/blob/main/Cargo.toml
+env_logger = "0.11"   # Builder::new().filter(crate, level).filter_level(Error).init()
+colored    = "3.1"    # [*] / [DEBUG] / [!] color tags in the custom format
+
+[[bin]]
+name = "localgroups-rs"
+path = "src/main.rs"
+
+
+[profile.release]
+opt-level = "z"
+lto = true
+strip = true
+codegen-units = 1
+panic = "abort"
